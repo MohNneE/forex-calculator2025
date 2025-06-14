@@ -30,9 +30,7 @@
     label {
       font-size: 16px;
     }
-    input,
-    select,
-    button {
+    input, select, button {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
@@ -59,106 +57,99 @@
 </head>
 <body>
 
-  <div class="calculator">
-    <h2>حاسبة خسائر وأرباح التداول - مع صفقة رابعة محسنة</h2>
+<div class="calculator">
+  <h2>حاسبة خسائر وأرباح التداول</h2>
 
-    <label>اختر زوج التداول:</label>
-    <select id="pair">
-      <option value="10">EUR/USD</option>
-      <option value="10">GBP/USD</option>
-      <option value="10">USD/JPY</option>
-      <option value="10">USD/CHF</option>
-      <option value="10">AUD/USD</option>
-      <option value="10">NZD/USD</option>
-      <option value="10">USD/CAD</option>
-      <option value="100">XAU/USD (ذهب)</option>
-      <option value="50">XAG/USD (فضة)</option>
-    </select>
+  <label>اختر زوج التداول:</label>
+  <select id="pair">
+    <option value="10">EUR/USD</option>
+    <option value="10">GBP/USD</option>
+    <option value="10">USD/JPY</option>
+    <option value="10">USD/CHF</option>
+    <option value="10">AUD/USD</option>
+    <option value="10">NZD/USD</option>
+    <option value="10">USD/CAD</option>
+    <option value="100">XAU/USD (ذهب)</option>
+    <option value="50">XAG/USD (فضة)</option>
+  </select>
 
-    <label>عدد النقاط الكلي المحتمل للخسارة:</label>
-    <input type="number" id="totalPips" placeholder="مثال: 60" />
+  <label>عدد النقاط الكلي المحتمل للخسارة:</label>
+  <input type="number" id="totalPips" placeholder="مثال: 60" />
 
-    <label>حجم الصفقة (Lot Size):</label>
-    <input type="number" step="0.01" id="lotSize" placeholder="مثال: 0.05" />
+  <label>حجم الصفقة (Lot Size):</label>
+  <input type="number" step="0.01" id="lotSize" placeholder="مثال: 0.05" />
 
-    <button onclick="calculate()">احسب النتائج</button>
+  <button onclick="calculate()">احسب النتائج</button>
 
-    <div class="result" id="result"></div>
-  </div>
+  <div class="result" id="result"></div>
+</div>
 
-  <script>
-    function calculate() {
-      const totalPips = parseFloat(document.getElementById("totalPips").value);
-      const lotSize = parseFloat(document.getElementById("lotSize").value);
-      const pipValue = parseFloat(document.getElementById("pair").value);
+<script>
+  function calculate() {
+    const totalPips = parseFloat(document.getElementById("totalPips").value);
+    const lotSize = parseFloat(document.getElementById("lotSize").value);
+    const pipValue = parseFloat(document.getElementById("pair").value);
 
-      if (isNaN(totalPips) || isNaN(lotSize)) {
-        document.getElementById("result").innerText =
-          "يرجى إدخال جميع القيم بشكل صحيح.";
-        return;
-      }
-
-      const pips1 = totalPips;
-      const pips2 = Math.max(0, totalPips - 10);
-      const pips3 = totalPips / 2;
-
-      const loss1 = pips1 * lotSize * pipValue;
-      const loss2 = pips2 * lotSize * pipValue;
-      const loss3 = pips3 * lotSize * pipValue;
-
-      let totalLoss = loss1 + loss2 + loss3;
-
-      const profit1 = 0;
-      const profit2 = 10 * lotSize * pipValue;
-      const profit3 = pips3 * lotSize * pipValue;
-
-      let totalProfit = profit1 + profit2 + profit3;
-
-      let fourthLoss = 0;
-      let fourthProfit = 0;
-      let fourthOutputLoss = "";
-      let fourthOutputProfit = "";
-
-      // ✅ شرط تفعيل الصفقة الرابعة: إذا كان نصف المسافة > 20
-      if (pips3 > 20) {
-        fourthLoss = 10 * lotSize * pipValue;
-        fourthProfit = (totalPips - 10) * lotSize * pipValue;
-
-        totalLoss += fourthLoss;
-        totalProfit += fourthProfit;
-
-        fourthOutputLoss =
-          "الصفقة الرابعة: 10 نقطة ➜ خسارة = $" + Math.round(fourthLoss) + "<br>";
-        fourthOutputProfit =
-          "الصفقة الرابعة: " +
-          (totalPips - 10) +
-          " نقطة ➜ ربح = $" +
-          Math.round(fourthProfit) +
-          "<br>";
-      }
-
-      const netResult = totalProfit - totalLoss;
-
-      document.getElementById("result").innerHTML = `
-        <strong>📉 الخسائر:</strong><br>
-        الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}<br>
-        الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}<br>
-        الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}<br>
-        ${fourthOutputLoss}
-        ✅ إجمالي الخسارة = <strong>$${Math.round(totalLoss)}</strong><br><br>
-
-        <strong>📈 الأرباح بعد التصحيح:</strong><br>
-        الصفقة الأولى: 0 نقطة ➜ ربح = $${Math.round(profit1)}<br>
-        الصفقة الثانية: 10 نقاط ➜ ربح = $${Math.round(profit2)}<br>
-        الصفقة الثالثة: ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}<br>
-        ${fourthOutputProfit}
-        ✅ إجمالي الأرباح = <strong>$${Math.round(totalProfit)}</strong><br><br>
-
-        <strong>📊 النتيجة النهائية = ${
-          netResult >= 0 ? "ربح" : "خسارة"
-        } = $${Math.round(netResult)}</strong>
-      `;
+    if (isNaN(totalPips) || isNaN(lotSize)) {
+      document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
+      return;
     }
-  </script>
+
+    const pips1 = totalPips;
+    const pips2 = Math.max(0, totalPips - 10);
+    const pips3 = totalPips / 2;
+
+    const loss1 = pips1 * lotSize * pipValue;
+    const loss2 = pips2 * lotSize * pipValue;
+    const loss3 = pips3 * lotSize * pipValue;
+
+    let totalLoss = loss1 + loss2 + loss3;
+
+    const profit1 = 0;
+    const profit2 = 10 * lotSize * pipValue;
+    const profit3 = pips3 * lotSize * pipValue;
+
+    let totalProfit = profit1 + profit2 + profit3;
+
+    let fourthLoss = 0;
+    let fourthProfit = 0;
+    let fourthOutputLoss = "";
+    let fourthOutputProfit = "";
+
+    if (pips3 > 20) {
+      fourthLoss = 10 * lotSize * pipValue;
+      fourthProfit = (totalPips - 10) * lotSize * pipValue;
+
+      totalLoss += fourthLoss;
+      totalProfit += fourthProfit;
+
+      fourthOutputLoss = `الصفقة الرابعة: 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}<br>`;
+      fourthOutputProfit = `الصفقة الرابعة: ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}<br>`;
+    }
+
+    const netResult = totalProfit - totalLoss;
+    const ratio = totalLoss > 0 ? Math.round((totalProfit / totalLoss) * 100) : 0;
+
+    document.getElementById("result").innerHTML = `
+      <strong>📉 الخسائر:</strong><br>
+      الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}<br>
+      الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}<br>
+      الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}<br>
+      ${fourthOutputLoss}
+      ✅ إجمالي الخسارة = <strong>$${Math.round(totalLoss)}</strong><br><br>
+
+      <strong>📈 الأرباح بعد التصحيح:</strong><br>
+      الصفقة الأولى: 0 نقطة ➜ ربح = $${Math.round(profit1)}<br>
+      الصفقة الثانية: 10 نقاط ➜ ربح = $${Math.round(profit2)}<br>
+      الصفقة الثالثة: ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}<br>
+      ${fourthOutputProfit}
+      ✅ إجمالي الأرباح = <strong>$${Math.round(totalProfit)}</strong><br><br>
+
+      <strong>📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}</strong><br><br>
+      <strong>📈 نسبة الربح إلى الخسارة = ${ratio}%</strong>
+    `;
+  }
+</script>
+
 </body>
 </html>
