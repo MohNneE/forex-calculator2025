@@ -2,178 +2,211 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>حاسبة التداول</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>حاسبة خسائر وأرباح التداول</title>
 
-<!-- أيقونة للتطبيق على الهاتف -->
-<link rel="apple-touch-icon" href="math.png" />
-<link rel="icon" type="image/png" sizes="192x192" href="math.png" />
+<!-- إضافة الأيقونة -->
+<link rel="apple-touch-icon" sizes="180x180" href="math.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="math.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="math.png" />
 
 <style>
+  /* الخطوط والألوان */
+  @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Cairo', sans-serif;
     direction: rtl;
-    padding: 15px;
-    max-width: 480px;
-    margin: auto;
-    background: #f0f4f8;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  h1 {
-    text-align: center;
-    color: #1e88e5;
-  }
-  label {
-    font-weight: bold;
-    display: block;
-    margin: 10px 0 5px;
-  }
-  input, select, button {
+
+  .calculator {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px 30px;
     width: 100%;
-    padding: 10px;
-    font-size: 1.1em;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+    max-width: 400px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #4b0082;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #5a4a7d;
+  }
+
+  select, input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: border-color 0.3s ease;
     box-sizing: border-box;
+    margin-bottom: 18px;
   }
+
+  select:focus, input:focus {
+    border-color: #764ba2;
+  }
+
   button {
-    margin-top: 15px;
-    background-color: #1e88e5;
-    color: white;
-    cursor: pointer;
+    width: 100%;
+    background: #764ba2;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 14px 0;
     border: none;
-    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 15px rgba(118, 75, 162, 0.4);
   }
+
   button:hover {
-    background-color: #1565c0;
+    background: #5a397d;
+    box-shadow: 0 10px 20px rgba(90, 57, 125, 0.6);
   }
-  .result, .percentage {
-    margin-top: 20px;
-    padding: 15px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px #bbb;
+
+  .result {
+    background: #f8f7ff;
+    border-radius: 15px;
+    padding: 15px 20px;
+    color: #4b0082;
+    font-weight: 600;
+    box-shadow: inset 0 0 8px rgba(118, 75, 162, 0.1);
+    line-height: 1.6;
+    min-height: 120px;
+    white-space: pre-line;
   }
-  .result p, .percentage p {
-    font-size: 1.2em;
-    margin: 8px 0;
+
+  /* Responsive */
+  @media (max-width: 450px) {
+    .calculator {
+      padding: 20px;
+      max-width: 100%;
+      border-radius: 15px;
+    }
+    h2 {
+      font-size: 18px;
+    }
+    button {
+      font-size: 16px;
+      padding: 12px 0;
+    }
   }
 </style>
 </head>
 <body>
 
-<h1>حاسبة التداول</h1>
+<div class="calculator">
+  <h2>حاسبة خسائر وأرباح التداول</h2>
 
-<label for="totalPoints">عدد النقاط الكلي المحتمل خسارته</label>
-<input type="number" id="totalPoints" min="0" step="1" />
+  <label>اختر زوج التداول:</label>
+  <select id="pair">
+    <option value="10">EUR/USD</option>
+    <option value="10">GBP/USD</option>
+    <option value="10">USD/JPY</option>
+    <option value="10">USD/CHF</option>
+    <option value="10">AUD/USD</option>
+    <option value="10">NZD/USD</option>
+    <option value="10">USD/CAD</option>
+    <option value="100">XAU/USD (ذهب)</option>
+    <option value="50">XAG/USD (فضة)</option>
+  </select>
 
-<label for="lotSize">حجم الصفقة (لوت)</label>
-<input type="number" id="lotSize" min="0" step="0.01" />
+  <label>عدد النقاط الكلي المحتمل للخسارة:</label>
+  <input type="number" id="totalPips" placeholder="مثال: 60" />
 
-<label for="pairSelect">اختر الزوج</label>
-<select id="pairSelect">
-  <option value="gold">الذهب</option>
-  <option value="silver">الفضة</option>
-  <option value="eurusd" selected>اليورو دولار</option>
-  <option value="gbpusd">الباوند دولار</option>
-  <option value="usdchf">الدولار فرنك</option>
-  <option value="usdjpy">الدولار ين</option>
-  <option value="usdcad">الدولار كندي</option>
-  <option value="audusd">الأسترالي دولار</option>
-  <option value="nzdusd">النيوزيلندي دولار</option>
-</select>
+  <label>حجم الصفقة (Lot Size):</label>
+  <input type="number" step="0.01" id="lotSize" placeholder="مثال: 0.05" />
 
-<button onclick="calculate()">احسب</button>
+  <button onclick="calculate()">احسب النتائج</button>
 
-<div class="result" id="result"></div>
-<div class="percentage" id="percentage"></div>
+  <div class="result" id="result"></div>
+</div>
 
 <script>
-  const pointValues = {
-    gold: 0.1,
-    silver: 0.01,
-    eurusd: 10,
-    gbpusd: 10,
-    usdchf: 10,
-    usdjpy: 1000,
-    usdcad: 10,
-    audusd: 10,
-    nzdusd: 10,
-  };
-
-  function formatNumber(num) {
-    // لو العدد صحيح نرجع بدون فواصل عشرية
-    if (Number.isInteger(num)) return num;
-    // اذا فيه كسور عشرية نرجع ب2 خانة فقط
-    return num.toFixed(2);
-  }
-
   function calculate() {
-    const totalPoints = Number(document.getElementById('totalPoints').value);
-    const lotSize = Number(document.getElementById('lotSize').value);
-    const pair = document.getElementById('pairSelect').value;
-    const pointValue = pointValues[pair] || 10;
+    const totalPips = parseFloat(document.getElementById("totalPips").value);
+    const lotSize = parseFloat(document.getElementById("lotSize").value);
+    const pipValue = parseFloat(document.getElementById("pair").value);
 
-    if (totalPoints <= 0 || lotSize <= 0) {
-      alert("يرجى إدخال قيم صحيحة أكبر من صفر");
+    if (isNaN(totalPips) || isNaN(lotSize)) {
+      document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
       return;
     }
 
-    // حساب خسائر الصفقات 1-3
-    const trade1LossPoints = totalPoints;
-    const trade2LossPoints = totalPoints - 10;
-    const trade3LossPoints = totalPoints / 2;
+    const pips1 = totalPips;
+    const pips2 = Math.max(0, totalPips - 10);
+    const pips3 = totalPips / 2;
 
-    // شرط تفعيل الصفقة الرابعة (نصف المسافة >= 15)
-    const halfPoints = totalPoints / 2;
-    let trade4LossPoints = 0;
-    let trade4Active = false;
-    if (halfPoints >= 15) {
-      trade4LossPoints = 10;
-      trade4Active = true;
+    const loss1 = pips1 * lotSize * pipValue;
+    const loss2 = pips2 * lotSize * pipValue;
+    const loss3 = pips3 * lotSize * pipValue;
+
+    let totalLoss = loss1 + loss2 + loss3;
+
+    const profit1 = 0;
+    const profit2 = 10 * lotSize * pipValue;
+    const profit3 = pips3 * lotSize * pipValue;
+
+    let totalProfit = profit1 + profit2 + profit3;
+
+    let fourthLoss = 0;
+    let fourthProfit = 0;
+    let fourthOutputLoss = "";
+    let fourthOutputProfit = "";
+
+    if (pips3 >= 15) {
+      fourthLoss = 10 * lotSize * pipValue;
+      fourthProfit = (totalPips - 10) * lotSize * pipValue;
+
+      totalLoss += fourthLoss;
+      totalProfit += fourthProfit;
+
+      fourthOutputLoss = `الصفقة الرابعة: 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}\n`;
+      fourthOutputProfit = `الصفقة الرابعة: ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}\n`;
     }
 
-    // خسائر الصفقات
-    const trade1Loss = lotSize * trade1LossPoints * pointValue;
-    const trade2Loss = lotSize * trade2LossPoints * pointValue;
-    const trade3Loss = lotSize * trade3LossPoints * pointValue;
-    const trade4Loss = trade4Active ? lotSize * trade4LossPoints * pointValue : 0;
+    const netResult = totalProfit - totalLoss;
+    const ratio = totalLoss > 0 ? Math.round((totalProfit / totalLoss) * 100) : 0;
 
-    const totalLoss = trade1Loss + trade2Loss + trade3Loss + trade4Loss;
+    document.getElementById("result").innerText = 
+      `📉 الخسائر:\n` +
+      `الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}\n` +
+      `الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}\n` +
+      `الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}\n` +
+      fourthOutputLoss +
+      `\n✅ إجمالي الخسارة = $${Math.round(totalLoss)}\n\n` +
 
-    // أرباح الصفقات في التصحيح
-    // صفقة 1: ربح 0
-    // صفقة 2: ربح 10 نقاط
-    // صفقة 3: ربح نصف عدد النقاط
-    // صفقة 4: ربح عدد النقاط الكلي - 10 (إذا مفعلة)
-    const trade1Profit = 0;
-    const trade2Profit = lotSize * 10 * pointValue;
-    const trade3Profit = lotSize * (totalPoints / 2) * pointValue;
-    const trade4Profit = trade4Active ? lotSize * (totalPoints - 10) * pointValue : 0;
+      `📈 الأرباح بعد التصحيح:\n` +
+      `الصفقة الأولى: 0 نقطة ➜ ربح = $${Math.round(profit1)}\n` +
+      `الصفقة الثانية: 10 نقاط ➜ ربح = $${Math.round(profit2)}\n` +
+      `الصفقة الثالثة: ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}\n` +
+      fourthOutputProfit +
+      `\n✅ إجمالي الأرباح = $${Math.round(totalProfit)}\n\n` +
 
-    const totalProfit = trade1Profit + trade2Profit + trade3Profit + trade4Profit;
-
-    // نسبة الربح إلى الخسارة
-    const profitLossRatio = (totalProfit / totalLoss) * 100;
-
-    // عرض النتائج مع حذف الأصفار بعد الفاصلة لو العدد صحيح
-    const res = `
-      <p>صفقة 1 خسارة: $${formatNumber(trade1Loss)}</p>
-      <p>صفقة 2 خسارة: $${formatNumber(trade2Loss)}</p>
-      <p>صفقة 3 خسارة: $${formatNumber(trade3Loss)}</p>
-      ${trade4Active ? `<p>صفقة 4 خسارة: $${formatNumber(trade4Loss)}</p>` : ''}
-      <hr>
-      <p>مجموع الخسائر: $${formatNumber(totalLoss)}</p>
-      <hr>
-      <p>صفقة 1 ربح: $${formatNumber(trade1Profit)}</p>
-      <p>صفقة 2 ربح: $${formatNumber(trade2Profit)}</p>
-      <p>صفقة 3 ربح: $${formatNumber(trade3Profit)}</p>
-      ${trade4Active ? `<p>صفقة 4 ربح: $${formatNumber(trade4Profit)}</p>` : ''}
-      <hr>
-      <p>مجموع الأرباح: $${formatNumber(totalProfit)}</p>
-      <hr>
-      <p>نسبة الربح إلى الخسارة: ${formatNumber(profitLossRatio)}%</p>
-    `;
-    document.getElementById('result').innerHTML = res;
+      `📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}\n\n` +
+      `📈 نسبة الربح إلى الخسارة = ${ratio}%`;
   }
 </script>
 
