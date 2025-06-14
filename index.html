@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>حاسبة خسائر وأرباح التداول</title>
 
-<!-- أيقونة التطبيق -->
 <link rel="apple-touch-icon" sizes="180x180" href="math.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="math.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="math.png" />
@@ -97,32 +96,20 @@
   }
 
   .line {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 6px 0;
     display: flex;
     align-items: center;
-    gap: 10px;
-    justify-content: flex-start; /* Checkbox on right */
+    gap: 8px;
+    margin: 4px 0;
   }
 
-  .loss-title {
-    color: red;
-    font-weight: bold;
-  }
-  .profit-title {
-    color: green;
-    font-weight: bold;
+  .line label {
+    flex-grow: 1;
+    cursor: pointer;
   }
 
-  .loss-amount {
-    color: red;
-    font-weight: bold;
-  }
-  .profit-amount {
-    color: green;
-    font-weight: bold;
+  .line.strikethrough label {
+    text-decoration: line-through;
+    color: #b00020;
   }
 
   @media (max-width: 450px) {
@@ -171,15 +158,49 @@
 </div>
 
 <script>
-let tradesData = null;
+function createLine(id, description, points, value, type) {
+  // نوع type = "loss" أو "profit"
+  const lineDiv = document.createElement('div');
+  lineDiv.classList.add('line');
+  lineDiv.id = id;
+
+  // إنشاء checkbox
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.checked = true;
+  checkbox.id = 'chk_' + id;
+
+  // إنشاء label للنص بجانب checkbox
+  const label = document.createElement('label');
+  label.htmlFor = checkbox.id;
+  label.innerText = `${description}: ${points} نقطة ➜ ${type === 'loss' ? 'خسارة' : 'ربح'} = $${Math.round(value)}`;
+
+  // عند تغير checkbox
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      lineDiv.classList.remove('strikethrough');
+    } else {
+      lineDiv.classList.add('strikethrough');
+    }
+    calculate(); // إعادة الحساب عند تفعيل/إلغاء
+  });
+
+  lineDiv.appendChild(checkbox);
+  lineDiv.appendChild(label);
+
+  return lineDiv;
+}
 
 function calculate() {
   const totalPips = parseFloat(document.getElementById("totalPips").value);
   const lotSize = parseFloat(document.getElementById("lotSize").value);
   const pipValue = parseFloat(document.getElementById("pair").value);
 
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = "";
+
   if (isNaN(totalPips) || isNaN(lotSize)) {
-    document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
+    resultDiv.innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
     return;
   }
 
@@ -191,93 +212,135 @@ function calculate() {
   const loss2 = pips2 * lotSize * pipValue;
   const loss3 = pips3 * lotSize * pipValue;
 
-  let fourthLoss = 0;
-  let fourthProfit = 0;
+  let totalLoss = 0;
+  let totalProfit = 0;
+
+  const profit1 = 0;
+  const profit2 = 10 * lotSize * pipValue;
+  const profit3 = pips3 * lotSize * pipValue;
+
+  // حساب الصفقة الرابعة اذا pips3 >= 15
+  let pips4_loss = 0;
+  let pips4_profit = 0;
   if (pips3 >= 15) {
-    fourthLoss = 10 * lotSize * pipValue;
-    fourthProfit = (totalPips - 10) * lotSize * pipValue;
+    pips4_loss = 10 * lotSize * pipValue;
+    pips4_profit = (totalPips - 10) * lotSize * pipValue;
   }
 
-  // خسائر الصفقات (مخزن مع id)
-  tradesData = {
-    losses: [
-      { id: 'loss1', label: `الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}`, value: loss1, checked: true },
-      { id: 'loss2', label: `الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}`, value: loss2, checked: true },
-      { id: 'loss3', label: `الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}`, value: loss3, checked: true },
-    ],
-    profits: [
-      { id: 'profit1', label: `الصفقة الأولى: 0 نقطة ➜ ربح = $0`, value: 0, checked: true },
-      { id: 'profit2', label: `الصفقة الثانية: 10 نقاط ➜ ربح = $${Math.round(10 * lotSize * pipValue)}`, value: 10 * lotSize * pipValue, checked: true },
-      { id: 'profit3', label: `الصفقة الثالثة: ${pips3} نقطة ➜ ربح = $${Math.round(pips3 * lotSize * pipValue)}`, value: pips3 * lotSize * pipValue, checked: true },
-    ]
-  };
+  // إنشاء قسم الخسائر مع checkbox
+  const lossesTitle = document.createElement('div');
+  lossesTitle.style.color = 'red';
+  lossesTitle.style.fontWeight = 'bold';
+  lossesTitle.innerText = "📉 الخسائر:";
+  resultDiv.appendChild(lossesTitle);
 
-  if (fourthLoss > 0) {
-    tradesData.losses.push({ id: 'loss4', label: `الصفقة الرابعة: 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}`, value: fourthLoss, checked: true });
-    tradesData.profits.push({ id: 'profit4', label: `الصفقة الرابعة: ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}`, value: fourthProfit, checked: true });
+  // صفقة 1
+  const lossLine1 = createLine('loss1', 'الصفقة الأولى', pips1, loss1, 'loss');
+  resultDiv.appendChild(lossLine1);
+
+  // صفقة 2
+  const lossLine2 = createLine('loss2', 'الصفقة الثانية', pips2, loss2, 'loss');
+  resultDiv.appendChild(lossLine2);
+
+  // صفقة 3
+  const lossLine3 = createLine('loss3', 'الصفقة الثالثة', pips3, loss3, 'loss');
+  resultDiv.appendChild(lossLine3);
+
+  // صفقة 4 (اختيارية)
+  let lossLine4 = null;
+  if (pips3 >= 15) {
+    lossLine4 = createLine('loss4', 'الصفقة الرابعة', 10, pips4_loss, 'loss');
+    resultDiv.appendChild(lossLine4);
   }
 
-  renderResults();
-}
+  // مسافة بين الخسائر والأرباح
+  resultDiv.appendChild(document.createElement('br'));
 
-function renderResults() {
-  // بناء قائمة الخسائر مع تشيك بوكس
-  let lossesHtml = `<div class="loss-title">📉 الخسائر:</div>`;
-  tradesData.losses.forEach(trade => {
-    lossesHtml += `
-    <div class="line">
-      <input type="checkbox" id="${trade.id}" checked onchange="toggleTrade('${trade.id}', 'loss')" />
-      <label for="${trade.id}">${trade.label}</label>
-    </div>`;
-  });
+  // إنشاء قسم الأرباح مع checkbox
+  const profitsTitle = document.createElement('div');
+  profitsTitle.style.color = 'green';
+  profitsTitle.style.fontWeight = 'bold';
+  profitsTitle.innerText = "📈 الأرباح بعد التصحيح:";
+  resultDiv.appendChild(profitsTitle);
 
-  // حساب إجمالي الخسارة بناءً على التشيك بوكس المختارة
-  const totalLoss = tradesData.losses.reduce((sum, trade) => {
-    const el = document.getElementById(trade.id);
-    if(el && el.checked) return sum + trade.value;
-    return sum;
+  // صفقة 1
+  const profitLine1 = createLine('profit1', 'الصفقة الأولى', 0, profit1, 'profit');
+  resultDiv.appendChild(profitLine1);
+
+  // صفقة 2
+  const profitLine2 = createLine('profit2', 'الصفقة الثانية', 10, profit2, 'profit');
+  resultDiv.appendChild(profitLine2);
+
+  // صفقة 3
+  const profitLine3 = createLine('profit3', 'الصفقة الثالثة', pips3, profit3, 'profit');
+  resultDiv.appendChild(profitLine3);
+
+  // صفقة 4 (اختيارية)
+  let profitLine4 = null;
+  if (pips3 >= 15) {
+    profitLine4 = createLine('profit4', 'الصفقة الرابعة', totalPips - 10, pips4_profit, 'profit');
+    resultDiv.appendChild(profitLine4);
+  }
+
+  // بعد إنشاء كل الخطوط، نحسب مجموع الخسائر والأرباح فقط للصفقات المفعلة (checkbox checked)
+
+  const losses = [
+    {line: lossLine1, value: loss1},
+    {line: lossLine2, value: loss2},
+    {line: lossLine3, value: loss3},
+  ];
+  if (lossLine4) losses.push({line: lossLine4, value: pips4_loss});
+
+  const profits = [
+    {line: profitLine1, value: profit1},
+    {line: profitLine2, value: profit2},
+    {line: profitLine3, value: profit3},
+  ];
+  if (profitLine4) profits.push({line: profitLine4, value: pips4_profit});
+
+  totalLoss = losses.reduce((sum, obj) => {
+    const chk = obj.line.querySelector('input[type=checkbox]');
+    return chk.checked ? sum + obj.value : sum;
   }, 0);
 
-  lossesHtml += `<div class="line loss-amount">✅ إجمالي الخسارة = $${Math.round(totalLoss)}</div>`;
-
-  // بناء قائمة الأرباح مع تشيك بوكس
-  let profitsHtml = `<div class="profit-title">📈 الأرباح بعد التصحيح:</div>`;
-  tradesData.profits.forEach(trade => {
-    profitsHtml += `
-    <div class="line">
-      <input type="checkbox" id="${trade.id}" checked onchange="toggleTrade('${trade.id}', 'profit')" />
-      <label for="${trade.id}">${trade.label}</label>
-    </div>`;
-  });
-
-  // حساب إجمالي الربح بناءً على التشيك بوكس المختارة
-  const totalProfit = tradesData.profits.reduce((sum, trade) => {
-    const el = document.getElementById(trade.id);
-    if(el && el.checked) return sum + trade.value;
-    return sum;
+  totalProfit = profits.reduce((sum, obj) => {
+    const chk = obj.line.querySelector('input[type=checkbox]');
+    return chk.checked ? sum + obj.value : sum;
   }, 0);
 
-  profitsHtml += `<div class="line profit-amount">✅ إجمالي الأرباح = $${Math.round(totalProfit)}</div>`;
+  // عرض إجمالي الخسارة والربح
+  const totalLossDiv = document.createElement('div');
+  totalLossDiv.style.color = 'red';
+  totalLossDiv.style.fontWeight = 'bold';
+  totalLossDiv.style.marginTop = '8px';
+  totalLossDiv.innerText = `✅ إجمالي الخسارة = $${Math.round(totalLoss)}`;
+  lossesTitle.after(totalLossDiv);
 
+  const totalProfitDiv = document.createElement('div');
+  totalProfitDiv.style.color = 'green';
+  totalProfitDiv.style.fontWeight = 'bold';
+  totalProfitDiv.style.marginTop = '8px';
+  totalProfitDiv.innerText = `✅ إجمالي الأرباح = $${Math.round(totalProfit)}`;
+  profitsTitle.after(totalProfitDiv);
+
+  // النتيجة النهائية والنسبة
   const netResult = totalProfit - totalLoss;
   const ratio = totalLoss > 0 ? Math.round((totalProfit / totalLoss) * 100) : 0;
 
-  const finalHtml = `
-    ${lossesHtml}
-    <br>
-    ${profitsHtml}
-    <br>
-    <div class="line"><strong>📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}</strong></div>
-    <div class="line"><strong>📈 نسبة الربح إلى الخسارة = ${ratio}%</strong></div>
+  const finalResultDiv = document.createElement('div');
+  finalResultDiv.classList.add('line');
+  finalResultDiv.style.marginTop = '15px';
+  finalResultDiv.innerHTML = `
+    <strong>📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}</strong>
   `;
+  resultDiv.appendChild(finalResultDiv);
 
-  document.getElementById("result").innerHTML = finalHtml;
-}
-
-// عند تبديل تشيك بوكس الصفقات يتم إعادة الحساب آلياً
-function toggleTrade(id, type) {
-  // فقط إعادة عرض النتائج مع الحساب الجديد
-  renderResults();
+  const ratioDiv = document.createElement('div');
+  ratioDiv.classList.add('line');
+  ratioDiv.innerHTML = `
+    <strong>📈 نسبة الربح إلى الخسارة = ${ratio}%</strong>
+  `;
+  resultDiv.appendChild(ratioDiv);
 }
 </script>
 
