@@ -191,7 +191,7 @@ function calculate() {
     totalProfit += fourthProfit;
 
     fourthOutputLoss = `الصفقة الرابعة: 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}`;
-    fourthOutputProfit = `الصفقة الرابعة: ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}`;
+    fourthOutputProfit = `الصفقة الرابعة : ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}`;
   }
 
   const netResult = totalProfit - totalLoss;
@@ -200,9 +200,9 @@ function calculate() {
   document.getElementById("result").innerHTML = `
     <div class="loss">
     <div class="line">📉  الخسائر  :</div>
-      <div class="line"> الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}</div>
-      <div class="line">الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}</div>
-      <div class="line">الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}</div>
+      <div class="line"> الصفقة الأولى : ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}</div>
+      <div class="line">ا لصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}</div>
+      <div class="line">الصفقة الثالثة : ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}</div>
       ${fourthOutputLoss ? `<div class="line">${fourthOutputLoss}</div>`  :  ""}
       <div class="line"><strong>✅ إجمالي الخسارة = $${Math.round(totalLoss)}</strong></div>
     </div>
