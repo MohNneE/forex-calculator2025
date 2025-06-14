@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>حاسبة خسائر وأرباح التداول</title>
 
-<!-- أيقونة مخصصة -->
+<!-- أيقونة التطبيق -->
 <link rel="apple-touch-icon" sizes="180x180" href="math.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="math.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="math.png" />
@@ -103,9 +103,6 @@
     margin: 4px 0;
   }
 
-  .loss { color: red; }
-  .profit { color: green; }
-
   @media (max-width: 450px) {
     .calculator {
       padding: 20px;
@@ -190,7 +187,7 @@ function calculate() {
     totalLoss += fourthLoss;
     totalProfit += fourthProfit;
 
-    fourthOutputLoss = `الصفقة الرابعة: 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}`;
+    fourthOutputLoss = `الصفقة الرابعة : 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}`;
     fourthOutputProfit = `الصفقة الرابعة : ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}`;
   }
 
@@ -198,24 +195,24 @@ function calculate() {
   const ratio = totalLoss > 0 ? Math.round((totalProfit / totalLoss) * 100) : 0;
 
   document.getElementById("result").innerHTML = `
-    <div class="loss">
-    <div class="line">📉  الخسائر  :</div>
-      <div class="line"> الصفقة الأولى : ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}</div>
-      <div class="line">ا لصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}</div>
+    <div>
+      <div style="color: red; font-weight: bold;">📉 الخسائر:</div>
+      <div class="line">الصفقة الأولى : ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}</div>
+      <div class="line">الصفقة الثانية : ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}</div>
       <div class="line">الصفقة الثالثة : ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}</div>
-      ${fourthOutputLoss ? `<div class="line">${fourthOutputLoss}</div>`  :  ""}
-      <div class="line"><strong>✅ إجمالي الخسارة = $${Math.round(totalLoss)}</strong></div>
+      ${fourthOutputLoss ? `<div class="line">${fourthOutputLoss}</div>` : ""}
+      <div class="line" style="color: red; font-weight: bold;">✅ إجمالي الخسارة = $${Math.round(totalLoss)}</div>
     </div>
 
     <br>
 
-    <div class="profit">
-    <div class="line">📈 الارباح بعد التصحيح :</div>
-      <div class="line"> الصفقة الأولى : 0 نقطة ➜ ربح = $${Math.round(profit1)}</div>
+    <div>
+      <div style="color: green; font-weight: bold;">📈 الأرباح بعد التصحيح:</div>
+      <div class="line">الصفقة الأولى : 0 نقطة ➜ ربح = $${Math.round(profit1)}</div>
       <div class="line">الصفقة الثانية : 10 نقاط ➜ ربح = $${Math.round(profit2)}</div>
       <div class="line">الصفقة الثالثة : ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}</div>
-      ${fourthOutputProfit ? `<div class="line">${fourthOutputProfit}</div>`  :  ""}
-      <div class="line"><strong>✅ إجمالي الأرباح = $${Math.round(totalProfit)}</strong></div>
+      ${fourthOutputProfit ? `<div class="line">${fourthOutputProfit}</div>` : ""}
+      <div class="line" style="color: green; font-weight: bold;">✅ إجمالي الأرباح = $${Math.round(totalProfit)}</div>
     </div>
 
     <br>
