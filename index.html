@@ -203,7 +203,7 @@ function calculate() {
       <div class="line"> الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}</div>
       <div class="line">الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}</div>
       <div class="line">الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}</div>
-      ${fourthOutputLoss ? `<div class="line">${fourthOutputLoss}</div>` : ""}
+      ${fourthOutputLoss ? `<div class="line">${fourthOutputLoss}</div>`  :  ""}
       <div class="line"><strong>✅ إجمالي الخسارة = $${Math.round(totalLoss)}</strong></div>
     </div>
 
@@ -211,10 +211,10 @@ function calculate() {
 
     <div class="profit">
     <div class="line">📈 الارباح بعد التصحيح :</div>
-      <div class="line"> الصفقة الأولى: 0 نقطة ➜ ربح = $${Math.round(profit1)}</div>
-      <div class="line">الصفقة الثانية: 10 نقاط ➜ ربح = $${Math.round(profit2)}</div>
-      <div class="line">الصفقة الثالثة: ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}</div>
-      ${fourthOutputProfit ? `<div class="line">${fourthOutputProfit}</div>` : ""}
+      <div class="line"> الصفقة الأولى : 0 نقطة ➜ ربح = $${Math.round(profit1)}</div>
+      <div class="line">الصفقة الثانية : 10 نقاط ➜ ربح = $${Math.round(profit2)}</div>
+      <div class="line">الصفقة الثالثة : ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}</div>
+      ${fourthOutputProfit ? `<div class="line">${fourthOutputProfit}</div>`  :  ""}
       <div class="line"><strong>✅ إجمالي الأرباح = $${Math.round(totalProfit)}</strong></div>
     </div>
 
