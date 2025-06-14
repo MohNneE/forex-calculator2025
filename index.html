@@ -3,68 +3,167 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>حاسبة خسائر وأرباح التداول - مع تحديد الصفقات</title>
-<link rel="icon" href="math.png" />
+<title>حاسبة خسائر وأرباح التداول</title>
+
+<!-- أيقونة التطبيق -->
+<link rel="apple-touch-icon" sizes="180x180" href="math.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="math.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="math.png" />
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+
   body {
     font-family: 'Cairo', sans-serif;
     direction: rtl;
-    background: #f2f2f2;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
     padding: 20px;
     color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
+
   .calculator {
     background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    max-width: 500px;
-    margin: auto;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    padding: 25px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.2);
   }
+
   h2 {
     text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
     color: #4b0082;
   }
-  label, select, input, button {
+
+  label {
     display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #5a4a7d;
+  }
+
+  select, input {
     width: 100%;
-    margin-bottom: 10px;
+    padding: 12px 15px;
     font-size: 16px;
-  }
-  button {
-    background: #4b0082;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-  }
-  .result {
-    margin-top: 20px;
-    padding: 15px;
-    background: #fafafa;
     border-radius: 10px;
-    font-size: 15px;
+    border: 2px solid #ddd;
+    outline: none;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+    margin-bottom: 18px;
   }
-  .loss-title { color: red; font-weight: bold; }
-  .profit-title { color: green; font-weight: bold; }
-  .line { white-space: nowrap; margin: 4px 0; }
+
+  select:focus, input:focus {
+    border-color: #764ba2;
+  }
+
+  button {
+    width: 100%;
+    background: #764ba2;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 14px 0;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 15px rgba(118, 75, 162, 0.4);
+  }
+
+  button:hover {
+    background: #5a397d;
+    box-shadow: 0 10px 20px rgba(90, 57, 125, 0.6);
+  }
+
+  .result {
+    background: #f8f7ff;
+    border-radius: 15px;
+    padding: 15px 20px;
+    font-weight: 600;
+    box-shadow: inset 0 0 8px rgba(118, 75, 162, 0.1);
+    line-height: 1.8;
+    min-height: 140px;
+    white-space: normal;
+  }
+
+  .line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start; /* Checkbox on right */
+  }
+
+  .loss-title {
+    color: red;
+    font-weight: bold;
+  }
+  .profit-title {
+    color: green;
+    font-weight: bold;
+  }
+
+  .loss-amount {
+    color: red;
+    font-weight: bold;
+  }
+  .profit-amount {
+    color: green;
+    font-weight: bold;
+  }
+
+  @media (max-width: 450px) {
+    .calculator {
+      padding: 20px;
+      max-width: 100%;
+      border-radius: 15px;
+    }
+    h2 {
+      font-size: 18px;
+    }
+    button {
+      font-size: 16px;
+      padding: 12px 0;
+    }
+  }
 </style>
 </head>
 <body>
+
 <div class="calculator">
   <h2>حاسبة خسائر وأرباح التداول</h2>
+
   <label>اختر زوج التداول:</label>
   <select id="pair">
     <option value="10">EUR/USD</option>
+    <option value="10">GBP/USD</option>
+    <option value="10">USD/JPY</option>
+    <option value="10">USD/CHF</option>
+    <option value="10">AUD/USD</option>
+    <option value="10">NZD/USD</option>
+    <option value="10">USD/CAD</option>
     <option value="100">XAU/USD (ذهب)</option>
+    <option value="50">XAG/USD (فضة)</option>
   </select>
 
   <label>عدد النقاط الكلي المحتمل للخسارة:</label>
-  <input type="number" id="totalPips" value="60" />
+  <input type="number" id="totalPips" placeholder="مثال: 60" />
 
   <label>حجم الصفقة (Lot Size):</label>
-  <input type="number" id="lotSize" step="0.01" value="0.05" />
+  <input type="number" step="0.01" id="lotSize" placeholder="مثال: 0.05" />
 
   <button onclick="calculate()">احسب النتائج</button>
 
@@ -72,83 +171,115 @@
 </div>
 
 <script>
+let tradesData = null;
+
 function calculate() {
   const totalPips = parseFloat(document.getElementById("totalPips").value);
   const lotSize = parseFloat(document.getElementById("lotSize").value);
   const pipValue = parseFloat(document.getElementById("pair").value);
 
+  if (isNaN(totalPips) || isNaN(lotSize)) {
+    document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
+    return;
+  }
+
   const pips1 = totalPips;
   const pips2 = Math.max(0, totalPips - 10);
   const pips3 = totalPips / 2;
-  const pips4 = 10;
-  const active4 = pips3 >= 15;
 
   const loss1 = pips1 * lotSize * pipValue;
   const loss2 = pips2 * lotSize * pipValue;
   const loss3 = pips3 * lotSize * pipValue;
-  const loss4 = active4 ? pips4 * lotSize * pipValue : 0;
 
-  const profit1 = 0;
-  const profit2 = 10 * lotSize * pipValue;
-  const profit3 = pips3 * lotSize * pipValue;
-  const profit4 = active4 ? (totalPips - 10) * lotSize * pipValue : 0;
+  let fourthLoss = 0;
+  let fourthProfit = 0;
+  if (pips3 >= 15) {
+    fourthLoss = 10 * lotSize * pipValue;
+    fourthProfit = (totalPips - 10) * lotSize * pipValue;
+  }
 
-  let html = `
-  <div class="loss-title">📉 الخسائر:</div>
-  <div class="line"><input type="checkbox" id="chk1" checked onchange="recalculate()" /> الصفقة 1: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}</div>
-  <div class="line"><input type="checkbox" id="chk2" checked onchange="recalculate()" /> الصفقة 2: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}</div>
-  <div class="line"><input type="checkbox" id="chk3" checked onchange="recalculate()" /> الصفقة 3: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}</div>
-  ${active4 ? `<div class="line"><input type="checkbox" id="chk4" checked onchange="recalculate()" /> الصفقة 4: 10 نقطة ➜ خسارة = $${Math.round(loss4)}</div>` : ''}
-  <br>
-  <div class="profit-title">📈 الأرباح بعد التصحيح:</div>
-  <div class="line">الصفقة 1: 0 نقطة ➜ ربح = $${Math.round(profit1)}</div>
-  <div class="line">الصفقة 2: 10 نقاط ➜ ربح = $${Math.round(profit2)}</div>
-  <div class="line">الصفقة 3: ${pips3} نقطة ➜ ربح = $${Math.round(profit3)}</div>
-  ${active4 ? `<div class="line">الصفقة 4: ${totalPips - 10} نقطة ➜ ربح = $${Math.round(profit4)}</div>` : ''}
-  <br>
-  <div id="finalResult"></div>
-  `;
+  // خسائر الصفقات (مخزن مع id)
+  tradesData = {
+    losses: [
+      { id: 'loss1', label: `الصفقة الأولى: ${pips1} نقطة ➜ خسارة = $${Math.round(loss1)}`, value: loss1, checked: true },
+      { id: 'loss2', label: `الصفقة الثانية: ${pips2} نقطة ➜ خسارة = $${Math.round(loss2)}`, value: loss2, checked: true },
+      { id: 'loss3', label: `الصفقة الثالثة: ${pips3} نقطة ➜ خسارة = $${Math.round(loss3)}`, value: loss3, checked: true },
+    ],
+    profits: [
+      { id: 'profit1', label: `الصفقة الأولى: 0 نقطة ➜ ربح = $0`, value: 0, checked: true },
+      { id: 'profit2', label: `الصفقة الثانية: 10 نقاط ➜ ربح = $${Math.round(10 * lotSize * pipValue)}`, value: 10 * lotSize * pipValue, checked: true },
+      { id: 'profit3', label: `الصفقة الثالثة: ${pips3} نقطة ➜ ربح = $${Math.round(pips3 * lotSize * pipValue)}`, value: pips3 * lotSize * pipValue, checked: true },
+    ]
+  };
 
-  document.getElementById("result").innerHTML = html;
-  recalculate();
+  if (fourthLoss > 0) {
+    tradesData.losses.push({ id: 'loss4', label: `الصفقة الرابعة: 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}`, value: fourthLoss, checked: true });
+    tradesData.profits.push({ id: 'profit4', label: `الصفقة الرابعة: ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}`, value: fourthProfit, checked: true });
+  }
+
+  renderResults();
 }
 
-function recalculate() {
-  const pipValue = parseFloat(document.getElementById("pair").value);
-  const totalPips = parseFloat(document.getElementById("totalPips").value);
-  const lotSize = parseFloat(document.getElementById("lotSize").value);
+function renderResults() {
+  // بناء قائمة الخسائر مع تشيك بوكس
+  let lossesHtml = `<div class="loss-title">📉 الخسائر:</div>`;
+  tradesData.losses.forEach(trade => {
+    lossesHtml += `
+    <div class="line">
+      <input type="checkbox" id="${trade.id}" checked onchange="toggleTrade('${trade.id}', 'loss')" />
+      <label for="${trade.id}">${trade.label}</label>
+    </div>`;
+  });
 
-  const pips1 = totalPips;
-  const pips2 = Math.max(0, totalPips - 10);
-  const pips3 = totalPips / 2;
-  const pips4 = 10;
-  const active4 = pips3 >= 15;
+  // حساب إجمالي الخسارة بناءً على التشيك بوكس المختارة
+  const totalLoss = tradesData.losses.reduce((sum, trade) => {
+    const el = document.getElementById(trade.id);
+    if(el && el.checked) return sum + trade.value;
+    return sum;
+  }, 0);
 
-  const losses = [
-    document.getElementById("chk1")?.checked ? pips1 * lotSize * pipValue : 0,
-    document.getElementById("chk2")?.checked ? pips2 * lotSize * pipValue : 0,
-    document.getElementById("chk3")?.checked ? pips3 * lotSize * pipValue : 0,
-    active4 && document.getElementById("chk4")?.checked ? pips4 * lotSize * pipValue : 0
-  ];
-  const profits = [
-    0,
-    10 * lotSize * pipValue,
-    pips3 * lotSize * pipValue,
-    active4 ? (totalPips - 10) * lotSize * pipValue : 0
-  ];
+  lossesHtml += `<div class="line loss-amount">✅ إجمالي الخسارة = $${Math.round(totalLoss)}</div>`;
 
-  const totalLoss = losses.reduce((a, b) => a + b, 0);
-  const totalProfit = profits.reduce((a, b) => a + b, 0);
-  const net = totalProfit - totalLoss;
+  // بناء قائمة الأرباح مع تشيك بوكس
+  let profitsHtml = `<div class="profit-title">📈 الأرباح بعد التصحيح:</div>`;
+  tradesData.profits.forEach(trade => {
+    profitsHtml += `
+    <div class="line">
+      <input type="checkbox" id="${trade.id}" checked onchange="toggleTrade('${trade.id}', 'profit')" />
+      <label for="${trade.id}">${trade.label}</label>
+    </div>`;
+  });
+
+  // حساب إجمالي الربح بناءً على التشيك بوكس المختارة
+  const totalProfit = tradesData.profits.reduce((sum, trade) => {
+    const el = document.getElementById(trade.id);
+    if(el && el.checked) return sum + trade.value;
+    return sum;
+  }, 0);
+
+  profitsHtml += `<div class="line profit-amount">✅ إجمالي الأرباح = $${Math.round(totalProfit)}</div>`;
+
+  const netResult = totalProfit - totalLoss;
   const ratio = totalLoss > 0 ? Math.round((totalProfit / totalLoss) * 100) : 0;
 
-  document.getElementById("finalResult").innerHTML = `
-    ✅ <strong>إجمالي الخسارة:</strong> $${Math.round(totalLoss)}<br>
-    ✅ <strong>إجمالي الأرباح:</strong> $${Math.round(totalProfit)}<br>
-    📊 <strong>النتيجة النهائية:</strong> ${net >= 0 ? "ربح" : "خسارة"} = $${Math.round(net)}<br>
-    📈 <strong>نسبة الربح إلى الخسارة:</strong> ${ratio}%
+  const finalHtml = `
+    ${lossesHtml}
+    <br>
+    ${profitsHtml}
+    <br>
+    <div class="line"><strong>📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}</strong></div>
+    <div class="line"><strong>📈 نسبة الربح إلى الخسارة = ${ratio}%</strong></div>
   `;
+
+  document.getElementById("result").innerHTML = finalHtml;
+}
+
+// عند تبديل تشيك بوكس الصفقات يتم إعادة الحساب آلياً
+function toggleTrade(id, type) {
+  // فقط إعادة عرض النتائج مع الحساب الجديد
+  renderResults();
 }
 </script>
+
 </body>
 </html>
