@@ -116,7 +116,7 @@
     let fourthOutputLoss = "";
     let fourthOutputProfit = "";
 
-    if (pips3 > 20) {
+    if (pips3 >= 15) {  // الشرط الجديد لتفعيل الصفقة الرابعة
       fourthLoss = 10 * lotSize * pipValue;
       fourthProfit = (totalPips - 10) * lotSize * pipValue;
 
