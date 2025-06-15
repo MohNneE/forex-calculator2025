@@ -150,6 +150,10 @@
 </div>
 
 <script>
+  function goToAdvanced() {
+  window.location.href = "advanced.html";
+}
+
 function calculate() {
   const totalPips = parseFloat(document.getElementById("totalPips").value);
   const lotSize = parseFloat(document.getElementById("lotSize").value);
@@ -159,9 +163,6 @@ function calculate() {
     document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
     return;
   }
-function goToAdvanced() {
-  window.location.href = "advanced.html";
-}
 
   const pips1 = totalPips;
   const pips2 = Math.max(0, totalPips - 10);
