@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>حاسبة متقدمة</title>
+  <link rel="icon" href="math.png" />
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+    body {
+      font-family: 'Cairo', sans-serif;
+      direction: rtl;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .calculator {
+      background: #fff;
+      border-radius: 20px;
+      padding: 25px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #4b0082;
+    }
+    label {
+      font-weight: bold;
+      margin: 8px 0 4px;
+      display: block;
+      color: #5a4a7d;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    button {
+      background-color: #764ba2;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #5a397d;
+    }
+    .result {
+      background: #f8f7ff;
+      border-radius: 15px;
+      padding: 15px;
+      font-weight: bold;
+      min-height: 120px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <h2>حاسبة متقدمة للخسائر والأرباح</h2>
+
+  <label>اختر زوج التداول:</label>
+  <select id="pair">
+    <option value="10">EUR/USD</option>
+    <option value="10">GBP/USD</option>
+    <option value="10">USD/JPY</option>
+    <option value="10">USD/CHF</option>
+    <option value="10">AUD/USD</option>
+    <option value="10">NZD/USD</option>
+    <option value="10">USD/CAD</option>
+    <option value="100">XAU/USD (ذهب)</option>
+    <option value="50">XAG/USD (فضة)</option>
+  </select>
+
+  <label>عدد النقاط الكلي المحتمل للخسارة:</label>
+  <input type="number" id="totalPips" placeholder="مثال: 60" />
+
+  <label>لوت الصفقة الأولى:</label>
+  <input type="number" step="0.01" id="lot1" placeholder="مثال: 0.05" />
+
+  <label>لوت الصفقة الثانية:</label>
+  <input type="number" step="0.01" id="lot2" placeholder="مثال: 0.05" />
+
+  <label>لوت الصفقة الثالثة:</label>
+  <input type="number" step="0.01" id="lot3" placeholder="مثال: 0.05" />
+
+  <label>لوت الصفقة الرابعة:</label>
+  <input type="number" step="0.01" id="lot4" placeholder="مثال: 0.05" />
+
+  <button onclick="calculateAdvanced()">احسب النتائج</button>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+function calculateAdvanced() {
+  const totalPips = parseFloat(document.getElementById("totalPips").value);
+  const pipValue = parseFloat(document.getElementById("pair").value);
+  const lot1 = parseFloat(document.getElementById("lot1").value);
+  const lot2 = parseFloat(document.getElementById("lot2").value);
+  const lot3 = parseFloat(document.getElementById("lot3").value);
+  const lot4 = parseFloat(document.getElementById("lot4").value);
+
+  if ([totalPips, lot1, lot2, lot3, lot4].some(isNaN)) {
+    document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
+    return;
+  }
+
+  const pips1 = totalPips;
+  const pips2 = Math.max(0, totalPips - 10);
+  const pips3 = totalPips / 2;
+
+  const loss1 = pips1 * lot1 * pipValue;
+  const loss2 = pips2 * lot2 * pipValue;
+  const loss3 = pips3 * lot3 * pipValue;
+
+  let totalLoss = loss1 + loss2 + loss3;
+
+  const profit1 = 0;
+  const profit2 = 10 * lot2 * pipValue;
+  const profit3 = pips3 * lot3 * pipValue;
+
+  let totalProfit = profit1 + profit2 + profit3;
+
+  let fourthLoss = 0;
+  let fourthProfit = 0;
+  let fourthOutputLoss = "";
+  let fourthOutputProfit = "";
+
+  if (pips3 >= 15) {
+    fourthLoss = 10 * lot4 * pipValue;
+    fourthProfit = (totalPips - 10) * lot4 * pipValue;
+
+    totalLoss += fourthLoss;
+    totalProfit += fourthProfit;
+
+    fourthOutputLoss = `الصفقة الرابعة : 10 نقطة ➜ خسارة = $${Math.round(fourthLoss)}`;
+    fourthOutputProfit = `الصفقة الرابعة : ${totalPips - 10} نقطة ➜ ربح = $${Math.round(fourthProfit)}`;
+  }
+
+  const netResult = totalProfit - totalLoss;
+  const ratio = totalLoss > 0 ? Math.round((totalProfit / totalLoss) * 100) : 0;
+
+  document.getElementById("result").innerHTML = `
+    <div style="color:red">📉 إجمالي الخسارة = $${Math.round(totalLoss)}</div>
+    <div style="color:green">📈 إجمالي الأرباح = $${Math.round(totalProfit)}</div>
+    <div>📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}</div>
+    <div>📈 نسبة الربح إلى الخسارة = ${ratio}%</div>
+  `;
+}
+</script>
+
+</body>
+</html>
