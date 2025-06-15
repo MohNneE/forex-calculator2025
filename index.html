@@ -14,8 +14,6 @@
   @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
 
   body {
-    
-
     font-family: 'Cairo', sans-serif;
     direction: rtl;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -24,8 +22,22 @@
     color: #333;
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+  }
+
+  .sponsor {
+    text-align: center;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   }
 
   .calculator {
@@ -119,22 +131,14 @@
       padding: 12px 0;
     }
   }
-  .sponsor {
-  text-align: center;
-  font-weight: bold;
-  color: #ffffff;
-  background-color: rgba(0, 0, 0, 0.3);
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 12px;
-  font-size: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
 </style>
 </head>
 <body>
+
+<!-- ✅ العبارة الدعائية في الأعلى -->
 <div class="sponsor">هذا التطبيق برعاية يوسف البياتي</div>
+
+<!-- ✅ حاسبة التداول -->
 <div class="calculator">
   <h2>حاسبة خسائر وأرباح التداول</h2>
 
@@ -158,16 +162,12 @@
   <input type="number" step="0.01" id="lotSize" placeholder="مثال: 0.05" />
 
   <button onclick="calculate()">احسب النتائج</button>
-<button onclick="goToAdvanced()">متقدم</button>
+  <button onclick="goToAdvanced()">متقدم</button>
 
   <div class="result" id="result"></div>
 </div>
 
 <script>
-  function goToAdvanced() {
-  window.location.href = "advanced.html";
-}
-
 function calculate() {
   const totalPips = parseFloat(document.getElementById("totalPips").value);
   const lotSize = parseFloat(document.getElementById("lotSize").value);
@@ -239,6 +239,10 @@ function calculate() {
     <div class="line"><strong>📊 النتيجة النهائية = ${netResult >= 0 ? "ربح" : "خسارة"} = $${Math.round(netResult)}</strong></div>
     <div class="line"><strong>📈 نسبة الربح إلى الخسارة = ${ratio}%</strong></div>
   `;
+}
+
+function goToAdvanced() {
+  window.location.href = "advanced.html";
 }
 </script>
 
