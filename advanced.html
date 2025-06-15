@@ -99,11 +99,16 @@
   <input type="number" step="0.01" id="lot4" placeholder="مثال: 0.05" />
 
   <button onclick="calculateAdvanced()">احسب النتائج</button>
+<button onclick="goBack()">⬅ ا الصفحة الرئيسية</button>
 
   <div class="result" id="result"></div>
 </div>
 
 <script>
+  function goBack() {
+  window.location.href = "index.html"; // غيّر الاسم إذا كانت الصفحة الرئيسية باسم مختلف
+}
+
 function calculateAdvanced() {
   const totalPips = parseFloat(document.getElementById("totalPips").value);
   const pipValue = parseFloat(document.getElementById("pair").value);
