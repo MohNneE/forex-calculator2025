@@ -135,10 +135,8 @@
 </head>
 <body>
 
-<!-- ✅ العبارة الدعائية في الأعلى -->
 <div class="sponsor">هذا التطبيق برعاية ابو يوسف البياتي</div>
 
-<!-- ✅ حاسبة التداول -->
 <div class="calculator">
   <h2>حاسبة خسائر وأرباح التداول</h2>
 
@@ -153,7 +151,7 @@
     <option value="10">USD/CAD</option>
     <option value="100">XAU/USD (ذهب)</option>
     <option value="50">XAG/USD (فضة)</option>
-    <option value="1">BTC/USD (بتكوين)</option> <!-- ✅ تمت الإضافة هنا -->
+    <option value="BTC/USD">BTC/USD (بتكوين)</option>
   </select>
 
   <label>عدد النقاط الكلي المحتمل للخسارة:</label>
@@ -172,7 +170,12 @@
 function calculate() {
   const totalPips = parseFloat(document.getElementById("totalPips").value);
   const lotSize = parseFloat(document.getElementById("lotSize").value);
-  const pipValue = parseFloat(document.getElementById("pair").value);
+
+  const pairSelect = document.getElementById("pair");
+  const pairValue = pairSelect.options[pairSelect.selectedIndex].value;
+
+  // تعيين قيمة النقطة حسب الزوج
+  const pipValue = pairValue === "BTC/USD" ? 0.01 : parseFloat(pairValue);
 
   if (isNaN(totalPips) || isNaN(lotSize)) {
     document.getElementById("result").innerText = "يرجى إدخال جميع القيم بشكل صحيح.";
