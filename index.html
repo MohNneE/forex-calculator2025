@@ -160,7 +160,7 @@
 
     const file = imageInput.files[0];
 
-    // لتحويل الصورة إلى نص Base64
+    // تحويل الصورة إلى Base64
     const toBase64 = file =>
       new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -182,7 +182,7 @@
     };
 
     try {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbxyrzh3Tgx1PpJ0NKujd0ddfZPzJh2ux-GzXEMUmdnmX6AyX8-Fja__w_zwQsV63m0T/exec", {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbydLGvmZFfPAuMAxiCoOS-n3iGrINNbU_aonRp9pQsNebteqKANzFnetc594T6ji4qv/exec", {
         method: 'POST',
         body: JSON.stringify(newTrade),
         headers: {
@@ -196,11 +196,11 @@
         addTradeBtn.disabled = true;
         conditionsCheck.checked = false;
       } else {
-        alert("حدث خطأ أثناء الإرسال. الرجاء المحاولة لاحقًا.");
+        alert("❌ حدث خطأ أثناء الإرسال. الرجاء المحاولة لاحقًا.");
       }
     } catch (err) {
       console.error(err);
-      alert("حدث خلل في الاتصال. تأكد من الإنترنت.");
+      alert("📡 حدث خلل في الاتصال. تأكد من الإنترنت أو من الرابط.");
     }
   });
 </script>
