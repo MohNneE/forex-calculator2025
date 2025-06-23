@@ -160,7 +160,6 @@
 
     const file = imageInput.files[0];
 
-    // تحويل الصورة إلى Base64
     const toBase64 = file =>
       new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -182,7 +181,7 @@
     };
 
     try {
-      const response = await fetch("https://script.google.com/macros/s/AKfycbydLGvmZFfPAuMAxiCoOS-n3iGrINNbU_aonRp9pQsNebteqKANzFnetc594T6ji4qv/exec", {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbz8yC_Eoe_0q8ImqR-1b0lD62sfYrJmh0yZf7txcSymhgkslvTBlZsSN5soRmmThOic2Q/exec", {
         method: 'POST',
         body: JSON.stringify(newTrade),
         headers: {
